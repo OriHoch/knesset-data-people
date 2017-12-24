@@ -4,24 +4,20 @@ services:
 - docker
 script:
 - |
-  if [ "${TRAVIS_BRANCH}" == "data" ] && [ "${TRAVIS_EVENT_TYPE}" == "cron" ] && [ "${GIT_REPO_TOKEN}" != "" ] then
-    docker build -t knesset-data-people .
-    docker run -d --name knessetdatapeople knesset-data-people serve
-    git config user.email "deployment-bot@knesset-data-people" &&\
-    git config user.name "knesset-data-people-deployment-bot" &&\
-    TEMPDIR=`mktemp -d` &&\
-    git clone --depth 1 --branch "${TRAVIS_BRANCH}" "https://github.com/${TRAVIS_REPO_SLUG}.git" "${TEMPDIR}" &&\
-    docker exec knessetdatapeople run ./join-mks &&\
-    docker exec knessetdatapeople run ./join-committee-meetings &&\
-    docker cp knessetdatapeople:/pipelines/data/ ./ &&\
-    if ! git diff --shortstat --exit-code data; then
-      git add data &&\
-      git commit -m "updated data" &&\
-      git push https://${GIT_REPO_TOKEN}'@'github.com/${TRAVIS_REPO_SLUG}.git "${TRAVIS_BRANCH}"
-    else
-      true
-    fi
+  TEMPDIR=`mktemp -d` &&\
+  git clone --depth 1 --branch "master" "https://github.com/${TRAVIS_REPO_SLUG}.git" "${TEMPDIR}" &&\
+  docker build -t knesset-data-people "${TEMPDIR}" &&\
+  docker run -d --name knessetdatapeople knesset-data-people serve &&\
+  git config user.email "deployment-bot@knesset-data-people" &&\
+  git config user.name "knesset-data-people-deployment-bot" &&\
+  docker exec knessetdatapeople run ./join-mks &&\
+  docker exec knessetdatapeople run ./join-committee-meetings &&\
+  docker cp knessetdatapeople:/pipelines/data/ ./ &&\
+  if ! git diff --shortstat --exit-code data; then
+    git add data &&\
+    git commit -m "updated data" &&\
+    git push https://${GIT_REPO_TOKEN}'@'github.com/${TRAVIS_REPO_SLUG}.git "${TRAVIS_BRANCH}"
   else
     true
-  fi
-- docker rm -f knessetdatapeople
+  fi &&\
+  docker rm -f knessetdatapeople
