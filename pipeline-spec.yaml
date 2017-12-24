@@ -1,26 +1,6 @@
-download-committees:
-  pipeline:
-  - run: load_resource
-    parameters:
-      url: https://minio.oknesset.org/committees/datapackage.json
-      resource: .*
-  - run: dump.to_path
-    parameters:
-      out-path: data/committees
-
-download-members:
-  pipeline:
-  - run: load_resource
-    parameters:
-      url: https://minio.oknesset.org/members/datapackage.json
-      resource: .*
-  - run: dump.to_path
-    parameters:
-      out-path: data/members
-
 join-committee-meetings:
   dependencies:
-  - pipeline: ./download-committees
+  - pipeline: ./download/committees
   description: join all committee meetings resources to a single resource
   pipeline:
   - run: load_resource
@@ -67,6 +47,8 @@ join-committee-meetings:
       out-path: data/committee-meetings
 
 join-mks:
+  dependencies:
+  - pipeline: ./download/members
   pipeline:
   - run: load_resource
     parameters:

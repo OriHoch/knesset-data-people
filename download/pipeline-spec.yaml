@@ -1,0 +1,19 @@
+committees:
+  pipeline:
+  - run: load_resource
+    parameters:
+      url: https://minio.oknesset.org/committees/datapackage.json
+      resource: .*
+  - run: dump.to_path
+    parameters:
+      out-path: ../data/committees
+
+members:
+  pipeline:
+  - run: load_resource
+    parameters:
+      url: https://minio.oknesset.org/members/datapackage.json
+      resource: .*
+  - run: dump.to_path
+    parameters:
+      out-path: ../data/members

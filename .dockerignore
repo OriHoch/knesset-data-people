@@ -4,7 +4,6 @@
 .cache
 .ipynb_checkpoints
 .tox
-data
 .dpp.db
 .env
 ENV
@@ -19,6 +18,6 @@ __pycache__
 *.egg-info
 .docker
 .travis
-data
 Dockerfile*
 .dpp.db
+data
