@@ -78,3 +78,19 @@ join-mks:
   - run: dump.to_path
     parameters:
       out-path: data/mks
+
+committee-meeting-attendees:
+  dependencies:
+  - pipeline: ./join-committee-meetings
+  pipeline:
+  - run: load_resource
+    parameters:
+      url: data/committee-meetings/datapackage.json
+      resource: kns_committeesession
+  - run: committee_meeting_attendees
+    parameters: {}
+#      filter-meeting-id: [247987]
+#      filter-committee-id: [198]
+  - run: dump.to_path
+    parameters:
+      out-path: data/committee-meeting-attendees
