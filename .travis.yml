@@ -10,8 +10,8 @@ script:
   docker run -d --name knessetdatapeople knesset-data-people serve &&\
   git config user.email "deployment-bot@knesset-data-people" &&\
   git config user.name "knesset-data-people-deployment-bot" &&\
-  docker exec knessetdatapeople run ./join-mks &&\
-  docker exec knessetdatapeople run ./join-committee-meetings &&\
+  docker exec knessetdatapeople dpp run ./join-mks &&\
+  docker exec knessetdatapeople dpp run ./join-committee-meetings &&\
   docker cp knessetdatapeople:/pipelines/data/ ./ &&\
   if ! git diff --shortstat --exit-code data; then
     git add data &&\
