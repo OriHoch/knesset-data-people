@@ -9,3 +9,5 @@ services:
     - "5000:5000"
     command:
     - serve
+    volumes:
+    - "./:/pipelines"

@@ -17,11 +17,12 @@ RUN pip install --upgrade https://github.com/OriHoch/datapackage-pipelines/archi
 COPY download/pipeline-spec.yaml /pipelines/download/
 
 RUN dpp run ./download/committees && dpp run ./download/members
-RUN mv data / &&\
+RUN mv data / && mv .dpp.db /data/ &&\
     echo "#!/usr/bin/env bash" > /copy_data.sh &&\
     echo "mkdir -p /pipelines/data" >> /copy_data.sh &&\
     echo "([ -e /pipelines/data/committees ] || cp -r /data/committees /pipelines/data/committees) && " >> /copy_data.sh &&\
     echo "([ -e /pipelines/data/members ] || cp -r /data/members /pipelines/data/members)" >> /copy_data.sh &&\
+    echo "([ -e /pipelines/.dpp.db ] || cp /data/.dpp.db /pipelines/)" >> /copy_data.sh &&\
     chmod +x /copy_data.sh &&\
     echo "#!/usr/bin/env bash" > /docker_run.sh &&\
     echo "/copy_data.sh && /dpp/docker/run.sh "'$@' >> /docker_run.sh &&\

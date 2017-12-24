@@ -7,29 +7,26 @@ Uses the [datapackage pipelines framework](https://github.com/frictionlessdata/d
 
 ## Usage
 
+Install recent versions of Docker and Docker Compose
+
 Start a local pipelines server
 
 ```
 docker-compose up -d pipelines
 ```
 
-check the available pipelines at http://localhost:5000/ or using the CLI:
+Pipelines status dashboard is available at http://localhost:5000/
+
+List the available pipelines:
 
 ```
 docker-compose exec pipelines dpp
 ```
 
-Run a pipeline
+Run a pipeline:
 
 ```
 docker-compose exec pipelines dpp run <PIPELINE_ID>
-```
-
-Copy data files from the pipelines server to be available locally
-
-```
-docker cp knessetdatapeople_pipelines_1:/pipelines/data/members ./data/members
-docker cp knessetdatapeople_pipelines_1:/pipelines/data/committees ./data/committees
 ```
 
 
@@ -64,4 +61,17 @@ Run a pipeline
 
 ```
 dpp run <PIPELINE_ID>
+```
+
+
+## Travis CI
+
+Travis builds the data and uploads to GitHub `data` branch
+
+To enable Travis updating GitHub, you need to have a [GitHub Machine User](https://developer.github.com/v3/guides/managing-deploy-keys/#machine-users)
+
+give the user write permissions and set in Travis private var
+
+```
+travis env --private set GIT_REPO_TOKEN "***"
 ```
