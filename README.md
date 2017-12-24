@@ -1,8 +1,12 @@
 # Knesset Data People
 
+[![Build Status](https://travis-ci.org/OriHoch/knesset-data-people.svg?branch=data)](https://travis-ci.org/OriHoch/knesset-data-people)
+
 Aggregate data about members of Knesset and other people relating to Knesset data.
 
 Uses the [datapackage pipelines framework](https://github.com/frictionlessdata/datapackage-pipelines)
+
+Data is updated weekly and available to download [here](https://github.com/OriHoch/knesset-data-people/tree/data/data)
 
 
 ## Usage
