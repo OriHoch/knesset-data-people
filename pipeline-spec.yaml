@@ -72,6 +72,9 @@ join-mks:
       url: data/members/datapackage.json
       resource: mk_individual
   - run: join_mks
+    parameters: {}
+#      filter-knesset-num: [20]
+#      filter-is-current: true
   - run: dump.to_path
     parameters:
       out-path: data/mks

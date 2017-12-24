@@ -6,14 +6,16 @@ Aggregate data about members of Knesset and other people relating to Knesset dat
 
 Uses the [datapackage pipelines framework](https://github.com/frictionlessdata/datapackage-pipelines)
 
-Data is updated weekly and available to download [here](https://github.com/OriHoch/knesset-data-people/tree/data/data)
-
 
 ## Usage
 
+The data is updated weekly and available to download [here](https://github.com/OriHoch/knesset-data-people/tree/data/data)
+
+To get a fresh copy or to make modifications, you can run it locally using Docker
+
 Install recent versions of Docker and Docker Compose
 
-Start a local pipelines server
+Start the pipelines server
 
 ```
 docker-compose up -d pipelines

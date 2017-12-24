@@ -1,5 +1,5 @@
 from datapackage_pipelines.wrapper import ingest, spew
-import logging
+import logging, requests
 
 
 parameters, datapackage, resources = ingest()
@@ -8,6 +8,11 @@ kns_mksitecode, kns_person = None, None
 kns_person_descriptor = None
 kns_persontoposition, kns_position = None, None
 mk_individual_resource, mk_individual_descriptor = None, None
+
+
+mk_altnames = {}
+for mk, mk_name in zip(*requests.get("https://oknesset.org/api/knesset-data/get_all_mk_names.json").json()):
+    mk_altnames.setdefault(int(mk["id"]), set()).add(mk_name.strip())
 
 
 for descriptor, resource in zip(datapackage["resources"], resources):
@@ -60,15 +65,16 @@ def get_person_positions(person_id):
                                                                             "FactionID", "FactionName",
                                                                             "GovernmentNum",
                                                                             "CommitteeID", "CommitteeName")}
-        position_id = int(kns_persontoposition_row["PositionID"])
-        position = kns_position[position_id]
-        finish_date = kns_persontoposition_row["FinishDate"]
-        mk_position.update(start_date=kns_persontoposition_row["StartDate"].strftime('%Y-%m-%d %H:%M:%S'),
-                           finish_date=finish_date.strftime('%Y-%m-%d %H:%M:%S') if finish_date else None,
-                           position=position["Description"],
-                           position_id=position_id,
-                           gender={250: "f", 251: "m", 252: "o"}[int(position["GenderID"])],)
-        yield mk_position
+        if not parameters.get("filter-knesset-num") or int(mk_position["KnessetNum"]) in parameters["filter-knesset-num"]:
+            position_id = int(kns_persontoposition_row["PositionID"])
+            position = kns_position[position_id]
+            finish_date = kns_persontoposition_row["FinishDate"]
+            mk_position.update(start_date=kns_persontoposition_row["StartDate"].strftime('%Y-%m-%d %H:%M:%S'),
+                               finish_date=finish_date.strftime('%Y-%m-%d %H:%M:%S') if finish_date else None,
+                               position=position["Description"],
+                               position_id=position_id,
+                               gender={250: "f", 251: "m", 252: "o"}[int(position["GenderID"])],)
+        yield {k: v for k, v in mk_position.items() if v}
 
 
 def get_mk_individual_resource(resource):
@@ -86,13 +92,21 @@ def get_mk_individual_resource(resource):
             kns_person_id, kns_person_row = find_matching_kns_person(mk_individual_row)
             if not kns_person_id or not kns_person_row:
                 raise Exception("Failed to find matching person for mk_invidual {}".format(mk_individual_id))
-        mk_individual_row.update(**kns_person_row)
-        mk_individual_row["positions"] = list(get_person_positions(kns_person_id))
-        yield mk_individual_row
+        if parameters.get("filter-is-current") is None or kns_person_row["IsCurrent"] == parameters["filter-is-current"]:
+            mk_individual_row.update(**kns_person_row)
+            mk_individual_row["positions"] = list(get_person_positions(kns_person_id))
+            altnames = mk_altnames.setdefault(mk_individual_id, set())
+            altnames.add("{} {}".format(mk_individual_row["mk_individual_first_name"].strip(),
+                                        mk_individual_row["mk_individual_name"].strip()).strip())
+            altnames.add("{} {}".format(kns_person_row["FirstName"].strip(),
+                                        mk_individual_row["LastName"].strip()).strip())
+            mk_individual_row["altnames"] = list(altnames)
+            yield mk_individual_row
 
 
 mk_individual_descriptor["schema"]["fields"] += kns_person_descriptor["schema"]["fields"] \
-                                              + [{"name": "positions", "type": "array"}]
+                                              + [{"name": "positions", "type": "array"},
+                                                 {"name": "altnames", "type": "array"}]
 
 
 spew(dict(datapackage, resources=[mk_individual_descriptor]),
