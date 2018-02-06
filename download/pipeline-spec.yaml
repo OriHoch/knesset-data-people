@@ -2,7 +2,7 @@ committees:
   pipeline:
   - run: load_resource
     parameters:
-      url: https://minio.oknesset.org/committees/datapackage.json
+      url: https://storage.googleapis.com/knesset-data-pipelines/data/committees/all/datapackage.zip
       resource: .*
   - run: dump.to_path
     parameters:
@@ -12,7 +12,7 @@ members:
   pipeline:
   - run: load_resource
     parameters:
-      url: https://minio.oknesset.org/members/datapackage.json
+      url: https://storage.googleapis.com/knesset-data-pipelines/data/members/all/datapackage.zip
       resource: .*
   - run: dump.to_path
     parameters:

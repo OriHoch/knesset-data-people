@@ -1,34 +1,18 @@
-FROM frictionlessdata/datapackage-pipelines
+FROM orihoch/sk8s-pipelines:v0.0.3-b
 
 RUN pip install --no-cache-dir pipenv pew
-RUN apk --update --no-cache add build-base python3-dev bash jq libxml2 libxml2-dev git libxslt libxslt-dev
+RUN apk --update --no-cache add build-base python3-dev bash jq
 
 COPY Pipfile /pipelines/
 COPY Pipfile.lock /pipelines/
 RUN pipenv install --system --deploy --ignore-pipfile && pipenv check
 
-#COPY setup.py /pipelines/
-#RUN pip install -e .
-
 # temporary fix for dpp not returning correct exit code
-# TODO: remove once this PR is merged: https://github.com/frictionlessdata/datapackage-pipelines/pull/107
+# TODO: remove once datapackage-pipelines v1.5.4 is released
 RUN pip install --upgrade https://github.com/OriHoch/datapackage-pipelines/archive/fix-exit-code.zip
 
-COPY download/pipeline-spec.yaml /pipelines/download/
+COPY --from=gcr.io/uumpa-public/sk8s-pipelines:v0.0.3 /entrypoint.sh /entrypoint.sh
 
-RUN dpp run ./download/committees && dpp run ./download/members
-RUN mv data / && mv .dpp.db /data/ &&\
-    echo "#!/usr/bin/env bash" > /copy_data.sh &&\
-    echo "mkdir -p /pipelines/data" >> /copy_data.sh &&\
-    echo "([ -e /pipelines/data/committees ] || cp -r /data/committees /pipelines/data/committees) && " >> /copy_data.sh &&\
-    echo "([ -e /pipelines/data/members ] || cp -r /data/members /pipelines/data/members)" >> /copy_data.sh &&\
-    echo "([ -e /pipelines/.dpp.db ] || cp /data/.dpp.db /pipelines/)" >> /copy_data.sh &&\
-    chmod +x /copy_data.sh &&\
-    echo "#!/usr/bin/env bash" > /docker_run.sh &&\
-    echo "/copy_data.sh && /dpp/docker/run.sh "'$@' >> /docker_run.sh &&\
-    chmod +x /docker_run.sh
-
-COPY pipeline-spec.yaml /pipelines/
 COPY *.py /pipelines/
-
-ENTRYPOINT ["/docker_run.sh"]
+COPY pipeline-spec.yaml /pipelines/
+COPY download/pipeline-spec.yaml /pipelines/download/

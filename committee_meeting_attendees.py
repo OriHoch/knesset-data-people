@@ -1,6 +1,9 @@
 from datapackage_pipelines.wrapper import ingest, spew
-import logging, requests
+import logging, requests, os
 from knesset_data.protocols.committee import CommitteeMeetingProtocol
+
+
+OKNESSET_MINIO_URL_PREFIX = os.environ.get("OKNESSET_MINIO_URL_PREFIX", "https://minio.oknesset.org/committees/")
 
 
 parameters, datapackage, resources = ingest()
@@ -23,8 +26,14 @@ def get_kns_committeesession_resource():
             and (not parameters.get("filter-committee-id") or int(committeesession_row["CommitteeID"]) in parameters["filter-committee-id"])
             and (not parameters.get("filter-knesset-num") or int(committeesession_row["KnessetNum"]) in parameters["filter-knesset-num"])
         ):
-            if committeesession_row["text_object_name"]:
-                protocol_text_url = "https://minio.oknesset.org/committees/" + committeesession_row["text_object_name"]
+            # text_file_name	                                            text_file_size
+            # data/committees/meeting_protocols_text/files/5/7/570611.txt	72817
+            if (
+                committeesession_row["text_file_name"]
+                and committeesession_row["text_file_size"]
+                and committeesession_row["text_file_size"] > 0
+            ):
+                protocol_text_url = "https://storage.googleapis.com/knesset-data-pipelines/{}".format(committeesession_row["text_file_name"])
                 text = requests.get(protocol_text_url).content.decode("utf-8")
                 with CommitteeMeetingProtocol.get_from_text(text) as protocol:
                     committeesession_row.update(protocol.attendees)
