@@ -18,5 +18,5 @@ COPY pipeline-spec.yaml /pipelines/
 COPY download/pipeline-spec.yaml /pipelines/download/
 COPY *.sh /pipelines/
 
-ENV PIPELINES_SCRIPT="cd /pipelines && ./pipelines_script.sh"
+ENV PIPELINES_SCRIPT="cd /pipelines && source ./pipelines_script.sh"
 ENV RUN_PIPELINE_CMD=run_pipeline
