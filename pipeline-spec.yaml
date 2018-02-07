@@ -1,6 +1,4 @@
 join-committee-meetings:
-  dependencies:
-  - pipeline: ./download/committees
   description: join all committee meetings resources to a single resource
   pipeline:
   - run: load_resource
@@ -52,8 +50,7 @@ join-committee-meetings:
       out-path: data/committees/joined-meetings
 
 join-members:
-  dependencies:
-  - pipeline: ./download/members
+  description: join the members resources
   pipeline:
   - run: load_resource
     parameters:
@@ -85,8 +82,7 @@ join-members:
       out-path: data/members/joined-mks
 
 committee-meeting-attendees:
-  dependencies:
-  - pipeline: ./join-committee-meetings
+  description: extract all the attendee names from the meeting protocols
   pipeline:
   - run: load_resource
     parameters:
@@ -99,3 +95,50 @@ committee-meeting-attendees:
   - run: dump.to_path
     parameters:
       out-path: data/committees/meeting-attendees
+
+#committee-meeting-speakers:
+#  description: extract all the spearker names from the meeting protocols
+#  piepline:
+#  - run: load_resource
+#    parameters:
+#      url: data/committees/joined-meetings/datapackage.json
+#      resource: kns_committeesession
+#  - run: committee_meeting_speakers
+#    parameters: {}
+##      filter-meeting-id: [247987]
+##      filter-committee-id: [198]
+#  - run: dump.to_path
+#    parameters:
+#      out-path: data/committees/meeting-speakers
+
+join-committee-meeting-attendees-mks:
+  description: join the meeting attendees with related mk data
+  pipeline:
+  - run: load_resource
+    parameters:
+      url: data/members/joined-mks/datapackage.json
+      resource: mk_individual
+  - run: load_resource
+    parameters:
+      url: data/committees/meeting-attendees/datapackage.json
+      resource: kns_committeesession
+  - run: join_committee_meeting_attendees_mks
+  - run: dump.to_path
+    parameters:
+      out-path: data/committees/joined-meeting-attendees-mks
+
+committee-meeting-attendees-mks-stats:
+  description: aggregate stats from the attendees / mk data
+  pipeline:
+  - run: load_resource
+    parameters:
+      url: data/committees/datapackage.json
+      resource: kns_committee
+  - run: load_large_csv_resource
+    parameters:
+      url: data/committees/joined-meeting-attendees-mks/datapackage.json
+      resource: kns_committeesession
+  - run: committee_meeting_attendees_mks_stats
+  - run: dump.to_path
+    parameters:
+      out-path: data/committees/committee-meeting-attendees-mks-stats

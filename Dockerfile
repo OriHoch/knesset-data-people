@@ -16,3 +16,7 @@ COPY --from=gcr.io/uumpa-public/sk8s-pipelines:v0.0.3 /entrypoint.sh /entrypoint
 COPY *.py /pipelines/
 COPY pipeline-spec.yaml /pipelines/
 COPY download/pipeline-spec.yaml /pipelines/download/
+COPY *.sh /pipelines/
+
+ENV PIPELINES_SCRIPT="cd /pipelines && ./pipelines_script.sh"
+ENV RUN_PIPELINE_CMD=run_pipeline
