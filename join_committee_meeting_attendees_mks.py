@@ -20,8 +20,6 @@ for mk_individual in next(resources):
     mk_individuals.append(mk_individual)
 
 
-name_errors = {}
-
 def get_mk_individual(mk):
     if "LastUpdatedDate" in mk:
         del mk["LastUpdatedDate"]
@@ -48,7 +46,7 @@ def get_resource():
                         all_attendee_names.add(attendee_name)
                     else:
                         all_attendee_names.add(attendee_name["name"])
-        attended_mks = {}
+        attended_mk_individual_ids = set()
         for attendee_name in all_attendee_names:
             for mk_individual in filter(lambda mk: meeting["KnessetNum"] in mk["knesset_nums"],
                                         map(get_mk_individual, mk_individuals)):
@@ -60,25 +58,13 @@ def get_resource():
                         if name in attendee_name:
                             name_in += 1
                     if name_equals or name_in:
-                        attended_mks[mk_individual["mk_individual_id"]] = mk_individual
-        meeting["attended_mk_individuals"] = []
-        for attended_mk in attended_mks:
-            meeting["attended_mk_individuals"].append(attended_mk)
+                        attended_mk_individual_ids.add(mk_individual["mk_individual_id"])
+        meeting["attended_mk_individual_ids"] = list(attended_mk_individual_ids)
         yield meeting
 
 
-def get_errors_resource():
-    for attendee_name, name_error in name_errors.items():
-        name_error["attendee_name"] = attendee_name
-        yield name_error
-
-
 datapackage["resources"] = [datapackage["resources"][1]]
-datapackage["resources"][0]["schema"]["fields"] += [{"name": "attended_mk_individuals", "type": "array"}]
-datapackage["resources"] += [{"name": "errors", "path": "errors.csv", PROP_STREAMING: True,
-                              "schema": {"fields": [{"name": "error", "type": "string"},
-                                                    {"name": "matching_mks", "type": "array"},
-                                                    {"name": "attendee_name", "type": "string"}]}}]
+datapackage["resources"][0]["schema"]["fields"] += [{"name": "attended_mk_individual_ids", "type": "array"}]
 
 
-spew(datapackage, [get_resource(), get_errors_resource()])
+spew(datapackage, [get_resource()])

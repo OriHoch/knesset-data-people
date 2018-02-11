@@ -40,7 +40,7 @@ KNOWN_MK_PERSON_IDS = {
 }
 
 
-# TODO: remove this mk matching function once this bug is fixed: https://github.com/hasadna/knesset-data/issues/147
+# TODO: remove this mk_individual matching function once this bug is fixed: https://github.com/hasadna/knesset-data/issues/147
 def find_matching_kns_person(mk):
     for person_id, person in kns_person.items():
         person_first, person_last, person_email = person["FirstName"].strip(), person["LastName"].strip(), person["Email"]

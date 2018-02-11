@@ -112,7 +112,7 @@ committee-meeting-attendees:
 #      out-path: data/committees/meeting-speakers
 
 join-committee-meeting-attendees-mks:
-  description: join the meeting attendees with related mk data
+  description: join the meeting attendees with related mk_individual data
   pipeline:
   - run: load_resource
     parameters:
@@ -128,8 +128,12 @@ join-committee-meeting-attendees-mks:
       out-path: data/committees/joined-meeting-attendees-mks
 
 committee-meeting-attendees-mks-stats:
-  description: aggregate stats from the attendees / mk data
+  description: aggregate stats from the attendees / mk_individual data
   pipeline:
+  - run: load_resource
+    parameters:
+      url: data/members/joined-mks/datapackage.json
+      resource: mk_individual
   - run: load_resource
     parameters:
       url: data/committees/datapackage.json
