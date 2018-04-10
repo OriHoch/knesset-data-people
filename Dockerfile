@@ -7,10 +7,6 @@ COPY Pipfile /pipelines/
 COPY Pipfile.lock /pipelines/
 RUN pipenv install --system --deploy --ignore-pipfile && pipenv check
 
-# temporary fix for dpp not returning correct exit code
-# TODO: remove once datapackage-pipelines v1.5.4 is released
-RUN pip install --upgrade https://github.com/OriHoch/datapackage-pipelines/archive/fix-exit-code.zip
-
 COPY --from=gcr.io/uumpa-public/sk8s-pipelines:v0.0.3 /entrypoint.sh /entrypoint.sh
 
 COPY *.py /pipelines/
