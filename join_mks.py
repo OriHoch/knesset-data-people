@@ -1,5 +1,5 @@
 from datapackage_pipelines.wrapper import ingest, spew
-import logging, requests
+import logging, requests, yaml
 
 
 parameters, datapackage, resources = ingest()
@@ -78,6 +78,8 @@ def get_person_positions(person_id):
 
 
 def get_mk_individual_resource(resource):
+    with open('join_mks_extra_details.yaml') as f:
+        mks_extra = yaml.load(f)
     for mk_individual_row in resource:
         mk_individual_id = int(mk_individual_row["mk_individual_id"])
         kns_person_id, kns_person_row = None, None
@@ -100,6 +102,10 @@ def get_mk_individual_resource(resource):
                                         mk_individual_row["mk_individual_name"].strip()).strip())
             altnames.add("{} {}".format(kns_person_row["FirstName"].strip(),
                                         mk_individual_row["LastName"].strip()).strip())
+            if mk_individual_id in mks_extra:
+                mk_extra = mks_extra[mk_individual_id]
+                if 'altnames' in mk_extra:
+                    altnames.update(set(mk_extra['altnames']))
             mk_individual_row["altnames"] = list(altnames)
             yield mk_individual_row
 
