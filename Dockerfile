@@ -17,6 +17,7 @@ COPY *.py /pipelines/
 COPY pipeline-spec.yaml /pipelines/
 COPY download/pipeline-spec.yaml /pipelines/download/
 COPY *.sh /pipelines/
+COPY join_mks_extra_details.yaml /pipelines/
 
 ENV PIPELINES_SCRIPT="cd /pipelines && (source ./pipelines_script.sh)"
 ENV RUN_PIPELINE_CMD=run_pipeline
