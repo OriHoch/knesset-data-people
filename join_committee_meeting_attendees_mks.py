@@ -15,7 +15,7 @@ for mk_individual in next(resources):
         if all(name_pair):
             mk_names.add("{} {}".format(*name_pair))
     if mk_individual["altnames"] and len(mk_individual["altnames"]) > 0:
-        mk_names.union(mk_individual["altnames"])
+        mk_names.update(mk_individual["altnames"])
     mk_individual["mk_names"] = list(mk_names)
     mk_individuals.append(mk_individual)
 
