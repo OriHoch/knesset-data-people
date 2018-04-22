@@ -45,10 +45,15 @@ join-committee-meetings:
         topics:
           name: Name
           aggregate: array
-  - run: dump_to_storage
+  - run: knesset.dump_to_path
     parameters:
       out-path: data/committees/joined-meetings
       storage-url: http://storage.googleapis.com/knesset-data-pipelines/data/people/committees/joined-meetings
+  - run: knesset.dump_to_sql
+    parameters:
+      tables:
+        people_committees_joined_meetings:
+          resource-name: kns_committeesession
 
 join-members:
   description: join the members resources
@@ -78,10 +83,15 @@ join-members:
     parameters: {}
 #      filter-knesset-num: [20]
 #      filter-is-current: true
-  - run: dump_to_storage
+  - run: knesset.dump_to_path
     parameters:
       out-path: data/members/joined-mks
       storage-url: http://storage.googleapis.com/knesset-data-pipelines/data/people/members/joined-mks
+  - run: knesset.dump_to_sql
+    parameters:
+      tables:
+        people_members_joined_mks:
+          resource-name: mk_individual
 
 committee-meeting-attendees:
   description: extract all the attendee names from the meeting protocols
@@ -94,10 +104,15 @@ committee-meeting-attendees:
     parameters:
       filter-meeting-id: [2019698]
 #      filter-committee-id: [198]
-  - run: dump_to_storage
+  - run: knesset.dump_to_path
     parameters:
       out-path: data/committees/meeting-attendees
       storage-url: http://storage.googleapis.com/knesset-data-pipelines/data/committees/meeting-attendees
+  - run: knesset.dump_to_sql
+    parameters:
+      tables:
+        people_committees_meeting_attendees:
+          resource-name: kns_committeesession
 
 #committee-meeting-speakers:
 #  description: extract all the spearker names from the meeting protocols
@@ -126,10 +141,15 @@ join-committee-meeting-attendees-mks:
       url: data/committees/meeting-attendees/datapackage.json
       resource: kns_committeesession
   - run: join_committee_meeting_attendees_mks
-  - run: dump_to_storage
+  - run: knesset.dump_to_path
     parameters:
       out-path: data/committees/joined-meeting-attendees-mks
       storage-url: http://storage.googleapis.com/knesset-data-pipelines/data/committees/joined-meeting-attendees-mks
+  - run: knesset.dump_to_sql
+    parameters:
+      tables:
+        people_committees_meeting_attendees_mks:
+          resource-name: kns_committeesession
 
 committee-meeting-attendees-mks-stats:
   description: aggregate stats from the attendees / mk_individual data
@@ -147,7 +167,14 @@ committee-meeting-attendees-mks-stats:
       url: data/committees/joined-meeting-attendees-mks/datapackage.json
       resource: kns_committeesession
   - run: committee_meeting_attendees_mks_stats
-  - run: dump_to_storage
+  - run: knesset.dump_to_path
     parameters:
       out-path: data/committees/committee-meeting-attendees-mks-stats
       storage-url: http://storage.googleapis.com/knesset-data-pipelines/data/committees/committee-meeting-attendees-mks-stats
+  - run: knesset.dump_to_sql
+    parameters:
+      tables:
+        people_committees_meeting_attendees_mks_stats:
+          resource-name: mk_attendance
+        people_committees_meeting_attendees_mks_stats_errors:
+          resource-name: errors
