@@ -80,7 +80,7 @@ join-members:
       url: data/members/datapackage.json
       resource: mk_individual
   - run: join_mks
-    parameters: {}
+#    parameters:
 #      filter-knesset-num: [20]
 #      filter-is-current: true
   - run: knesset.dump_to_path
@@ -101,8 +101,8 @@ committee-meeting-attendees:
       url: data/committees/joined-meetings/datapackage.json
       resource: kns_committeesession
   - run: committee_meeting_attendees
-    parameters:
-      filter-meeting-id: [2019698]
+#    parameters:
+#      filter-meeting-id: [2019698]
 #      filter-committee-id: [198]
   - run: knesset.dump_to_path
     parameters:
