@@ -107,7 +107,7 @@ committee-meeting-attendees:
   - run: knesset.dump_to_path
     parameters:
       out-path: data/committees/meeting-attendees
-      storage-url: http://storage.googleapis.com/knesset-data-pipelines/data/committees/meeting-attendees
+      storage-url: http://storage.googleapis.com/knesset-data-pipelines/data/people/committees/meeting-attendees
   - run: knesset.dump_to_sql
     parameters:
       tables:
@@ -144,7 +144,7 @@ join-committee-meeting-attendees-mks:
   - run: knesset.dump_to_path
     parameters:
       out-path: data/committees/joined-meeting-attendees-mks
-      storage-url: http://storage.googleapis.com/knesset-data-pipelines/data/committees/joined-meeting-attendees-mks
+      storage-url: http://storage.googleapis.com/knesset-data-pipelines/data/people/committees/joined-meeting-attendees-mks
   - run: knesset.dump_to_sql
     parameters:
       tables:
@@ -170,7 +170,7 @@ committee-meeting-attendees-mks-stats:
   - run: knesset.dump_to_path
     parameters:
       out-path: data/committees/committee-meeting-attendees-mks-stats
-      storage-url: http://storage.googleapis.com/knesset-data-pipelines/data/committees/committee-meeting-attendees-mks-stats
+      storage-url: http://storage.googleapis.com/knesset-data-pipelines/data/people/committees/committee-meeting-attendees-mks-stats
   - run: knesset.dump_to_sql
     parameters:
       tables:
