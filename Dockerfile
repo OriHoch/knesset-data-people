@@ -9,6 +9,7 @@ RUN apk --update --no-cache add python &&\
     pip install psycopg2-binary &&\
     pip install --upgrade https://github.com/hasadna/knesset-data-pipelines/archive/master.zip &&\
     cd / && wget -q https://storage.googleapis.com/pub/gsutil.tar.gz && tar xfz gsutil.tar.gz && rm gsutil.tar.gz
+COPY oknesset_all_mk_names_May26_2018.json /pipelines/
 COPY boto.config /root/.boto
 COPY *.py /pipelines/
 COPY pipeline-spec.yaml /pipelines/
