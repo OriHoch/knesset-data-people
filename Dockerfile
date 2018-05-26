@@ -7,8 +7,7 @@ COPY Pipfile.lock /pipelines/
 RUN pipenv install --system --deploy --ignore-pipfile
 RUN apk --update --no-cache add python &&\
     pip install psycopg2-binary &&\
-    pip install --upgrade https://github.com/OriHoch/datapackage-pipelines/archive/cli-support-list-of-pipeline-ids.zip &&\
-    pip install --upgrade https://github.com/OriHoch/knesset-data-pipelines/archive/add-missing-tables-from-knesset.zip &&\
+    pip install --upgrade https://github.com/hasadna/knesset-data-pipelines/archive/master.zip &&\
     cd / && wget -q https://storage.googleapis.com/pub/gsutil.tar.gz && tar xfz gsutil.tar.gz && rm gsutil.tar.gz
 COPY boto.config /root/.boto
 COPY *.py /pipelines/
@@ -16,4 +15,3 @@ COPY pipeline-spec.yaml /pipelines/
 COPY download/pipeline-spec.yaml /pipelines/download/
 COPY *.sh /pipelines/
 COPY join_mks_extra_details.yaml /pipelines/
-ENTRYPOINT ["/pipelines/pipelines_script.sh"]

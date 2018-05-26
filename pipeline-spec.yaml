@@ -1,5 +1,9 @@
 join-committee-meetings:
   description: join all committee meetings resources to a single resource
+  schedule:
+    crontab: "10 1 * * *"
+  dependencies:
+  - pipeline: ./download/committees
   pipeline:
   - run: load_resource
     parameters:
@@ -57,6 +61,10 @@ join-committee-meetings:
 
 join-members:
   description: join the members resources
+  schedule:
+    crontab: "10 1 * * *"
+  dependencies:
+  - pipeline: ./download/members
   pipeline:
   - run: load_resource
     parameters:
@@ -95,6 +103,10 @@ join-members:
 
 committee-meeting-attendees:
   description: extract all the attendee names from the meeting protocols
+  schedule:
+    crontab: "10 1 * * *"
+  dependencies:
+  - pipeline: ./join-committee-meetings
   pipeline:
   - run: load_resource
     parameters:
@@ -131,6 +143,11 @@ committee-meeting-attendees:
 
 join-committee-meeting-attendees-mks:
   description: join the meeting attendees with related mk_individual data
+  schedule:
+    crontab: "10 1 * * *"
+  dependencies:
+  - pipeline: ./committee-meeting-attendees
+  - pipeline: ./join-members
   pipeline:
   - run: load_resource
     parameters:
@@ -153,6 +170,10 @@ join-committee-meeting-attendees-mks:
 
 committee-meeting-attendees-mks-stats:
   description: aggregate stats from the attendees / mk_individual data
+  schedule:
+    crontab: "10 1 * * *"
+  dependencies:
+  - pipeline: ./join-committee-meeting-attendees-mks
   pipeline:
   - run: load_resource
     parameters:
