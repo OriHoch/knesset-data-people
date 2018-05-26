@@ -1,5 +1,5 @@
 from datapackage_pipelines.wrapper import ingest, spew
-import logging, requests, yaml
+import logging, yaml, json
 
 
 parameters, datapackage, resources = ingest()
@@ -11,8 +11,9 @@ mk_individual_resource, mk_individual_descriptor = None, None
 
 
 mk_altnames = {}
-for mk, mk_name in zip(*requests.get("https://oknesset.org/api/knesset-data/get_all_mk_names.json").json()):
-    mk_altnames.setdefault(int(mk["id"]), set()).add(mk_name.strip())
+with open('oknesset_all_mk_names_May26_2018.json') as f:
+    for mk, mk_name in zip(*json.load(f)):
+        mk_altnames.setdefault(int(mk["id"]), set()).add(mk_name.strip())
 
 
 for descriptor, resource in zip(datapackage["resources"], resources):
