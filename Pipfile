@@ -9,6 +9,7 @@ distribute = "*"
 "datapackage-pipelines[speedup]" = "*"
 knesset-data = "*"
 sh = "*"
+datapackage-pipelines-metrics = "*"
 
 [dev-packages]
 ipdb = "*"

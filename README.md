@@ -33,8 +33,7 @@ pipenv shell
 Install some additional dependencies
 
 ```
-pip install --upgrade https://github.com/OriHoch/datapackage-pipelines/archive/cli-support-list-of-pipeline-ids.zip
-pip install --upgrade https://github.com/OriHoch/knesset-data-pipelines/archive/add-missing-tables-from-knesset.zip
+pip install --upgrade https://github.com/hasadna/knesset-data-pipelines/archive/master.zip
 ```
 
 List the available pipelines
