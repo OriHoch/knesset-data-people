@@ -30,12 +30,6 @@ Activate the virtualenv
 pipenv shell
 ```
 
-Install some additional dependencies
-
-```
-pip install --upgrade https://github.com/hasadna/knesset-data-pipelines/archive/master.zip
-```
-
 List the available pipelines
 
 ```

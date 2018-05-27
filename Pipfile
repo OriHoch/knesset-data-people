@@ -6,10 +6,11 @@ name = "pypi"
 [packages]
 setuptools = "*"
 distribute = "*"
-"datapackage-pipelines[speedup]" = "*"
+"datapackage-pipelines[develop,speedup]" = "<1.7.0"
 knesset-data = "*"
 sh = "*"
 datapackage-pipelines-metrics = "*"
+"49db258" = {file = "https://github.com/hasadna/knesset-data-pipelines/archive/master.zip"}
 
 [dev-packages]
 ipdb = "*"
