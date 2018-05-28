@@ -1,63 +1,3 @@
-join-committee-meetings:
-  description: join all committee meetings resources to a single resource
-  schedule:
-    crontab: "10 1 * * *"
-  dependencies:
-  - pipeline: ./download/committees
-  pipeline:
-  - run: load_resource
-    parameters:
-      url: data/committees/datapackage.json
-      resource: kns_cmtsessionitem
-  - run: load_resource
-    parameters:
-      url: data/committees/datapackage.json
-      resource: gcs_list_files
-  - run: filter
-    parameters:
-      resources: gcs_list_files
-      in:
-      - file_type: text
-  - run: load_resource
-    parameters:
-      url: data/committees/datapackage.json
-      resource: kns_committeesession
-  - run: join
-    parameters:
-      source:
-        name: gcs_list_files
-        key: ["committee_session_id"]
-        delete: true
-      target:
-        name: kns_committeesession
-        key: ["CommitteeSessionID"]
-      fields:
-        text_file_name:
-          name: name
-        text_file_size:
-          name: size
-  - run: join
-    parameters:
-      source:
-        name: kns_cmtsessionitem
-        key: ["CommitteeSessionID"]
-        delete: true
-      target:
-        name: kns_committeesession
-        key: ["CommitteeSessionID"]
-      fields:
-        topics:
-          name: Name
-          aggregate: array
-  - run: knesset.dump_to_path
-    parameters:
-      out-path: data/committees/joined-meetings
-      storage-url: http://storage.googleapis.com/knesset-data-pipelines/data/people/committees/joined-meetings
-  - run: knesset.dump_to_sql
-    parameters:
-      tables:
-        people_committees_joined_meetings:
-          resource-name: kns_committeesession
 
 join-members:
   description: join the members resources
@@ -101,20 +41,42 @@ join-members:
         people_members_joined_mks:
           resource-name: mk_individual
 
-committee-meeting-attendees:
-  description: extract all the attendee names from the meeting protocols
+source-data-stats:
+  description: calculate some stats about the source data
   schedule:
     crontab: "10 1 * * *"
   dependencies:
-  - pipeline: ./join-committee-meetings
+  - pipeline: ./download/committees
+  - pipeline: ./join-members
   pipeline:
   - run: load_resource
     parameters:
       url: data/committees/joined-meetings/datapackage.json
       resource: kns_committeesession
+  - run: load_resource
+    parameters:
+      url: data/members/joined-mks/datapackage.json
+      resource: mk_individual
+  - run: source_data_stats
+
+committee-meeting-attendees:
+  description: extract all the attendee names from the meeting protocols
+  schedule:
+    crontab: "10 1 * * *"
+  dependencies:
+  - pipeline: ./download/committees
+  pipeline:
+  - run: load_resource
+    parameters:
+      url: data/committees/joined-meetings/datapackage.json
+      resource: kns_committeesession
+  - run: filter
+    parameters:
+      in:
+      - CommitteeSessionID: 2068104
   - run: committee_meeting_attendees
 #    parameters:
-#      filter-meeting-id: [2019698]
+#      filter-meeting-id: [2019698,2068132,2068104]
 #      filter-committee-id: [198]
   - run: knesset.dump_to_path
     parameters:

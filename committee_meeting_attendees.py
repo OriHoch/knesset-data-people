@@ -28,16 +28,15 @@ def get_kns_committeesession_resource():
         ):
             # text_file_name	                                            text_file_size
             # data/committees/meeting_protocols_text/files/5/7/570611.txt	72817
-            if (
-                committeesession_row["text_file_name"]
-                and committeesession_row["text_file_size"]
-                and committeesession_row["text_file_size"] > 0
-            ):
-                protocol_text_url = "https://storage.googleapis.com/knesset-data-pipelines/{}".format(committeesession_row["text_file_name"])
-                text = requests.get(protocol_text_url).content.decode("utf-8")
-                with CommitteeMeetingProtocol.get_from_text(text) as protocol:
-                    committeesession_row.update(protocol.attendees)
-            yield committeesession_row
+            if committeesession_row["text_filename"]:
+                protocol_text_url = "https://storage.googleapis.com/knesset-data-pipelines/data/committees/" \
+                                    "meeting_protocols_text/{}".format(committeesession_row["text_filename"])
+                res = requests.get(protocol_text_url)
+                if res.status_code == 200:
+                    text = requests.get(protocol_text_url).content.decode("utf-8")
+                    with CommitteeMeetingProtocol.get_from_text(text) as protocol:
+                        committeesession_row.update(protocol.attendees)
+                    yield committeesession_row
 
 
 kns_committeesession_descriptor["schema"]["fields"] += [{"name": "mks", "type": "array"},

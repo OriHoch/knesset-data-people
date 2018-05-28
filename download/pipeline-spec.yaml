@@ -2,21 +2,21 @@ committees:
   schedule:
     crontab: "10 1 * * *"
   pipeline:
-  - run: load_resource
+  - run: knesset.load_resource
     parameters:
-      url: https://storage.googleapis.com/knesset-data-pipelines/data/committees/all/datapackage.zip
-      resource: .*
+      path: committees/joined-meetings/datapackage.json
+      resource: kns_committeesession
   - run: dump.to_path
     parameters:
-      out-path: ../data/committees
+      out-path: ../data/committees/joined-meetings
 
 members:
   schedule:
     crontab: "10 1 * * *"
   pipeline:
-  - run: load_resource
+  - run: knesset.load_resource
     parameters:
-      url: https://storage.googleapis.com/knesset-data-pipelines/data/members/all/datapackage.zip
+      path: members/all/datapackage.zip
       resource: .*
   - run: dump.to_path
     parameters:
