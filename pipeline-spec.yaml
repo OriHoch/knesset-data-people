@@ -70,10 +70,10 @@ committee-meeting-attendees:
     parameters:
       url: data/committees/joined-meetings/datapackage.json
       resource: kns_committeesession
-  - run: filter
-    parameters:
-      in:
-      - CommitteeSessionID: 2068104
+#  - run: filter
+#    parameters:
+#      in:
+#      - CommitteeSessionID: 2068104
   - run: committee_meeting_attendees
 #    parameters:
 #      filter-meeting-id: [2019698,2068132,2068104]
